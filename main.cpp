@@ -25,6 +25,7 @@ vex::motor DRIVE_LB = vex::motor(PORT5, false);
 
 vex::motor RAMP = vex::motor(PORT19, false);
 
+vex::pwm_out Led1 = vex::pwm_out(Brain.ThreeWirePort.A);
 
 vex::motor INTAKE_R = vex::motor(PORT14);
 vex::motor INTAKE_L = vex::motor(PORT6, true);
