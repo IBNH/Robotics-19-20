@@ -228,6 +228,38 @@ if( pid_Ki != 0 )
         sleep(750);
 }
 
+vex::thread calcL;
+
+int* encoderL(int i){
+  while(true){
+
+  }
+  
+  return 0;
+}
+
+void calcR()
+{
+  while(true){
+    test(&calcR);
+  }
+}
+
+
+
+void test(void *func) {
+
+}
+
+
+
+void* threadR(*ptr){
+while(true){
+
+  }
+(*ptr) ();
+}
+
 
 /*
 double getVelocity(){
@@ -476,6 +508,9 @@ if(controller1.ButtonL1.pressing()){
 //
 int main() {
     //Set up callbacks for autonomous and driver control periods.
+   //calcTask =  vex::task(encoderL());
+   vex::thread thread( threadR() );
+  
     Competition.autonomous( autonomous );
     Competition.drivercontrol( usercontrol );
     
