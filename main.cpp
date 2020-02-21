@@ -115,56 +115,81 @@ static float PID_INTEGRAL_LIMIT = 50;
 static int PID_DRIVE_MAX = 127;
 static int PID_DRIVE_MIN = -127;
 
-float  encoderValue = 0;
+float  encoderValueL = 0;
+float  encoderValueR = 0;
 float  pid_Kp = 2.0;
 float  pid_Ki = 0.04;
 float  pid_Kd = 0.0;
 
-float  pidError = 1000;
-float  pidLastError = 0;
-float  pidIntegral = 0;
-float  pidDerivative = 0;
-float  pidDrive;
+float  pidErrorL = 1000;
+float  pidErrorR = 1000;
+float  pidLastErrorL = 0;
+float  pidLastErrorR = 0;
+float  pidIntegralL = 0;
+float  pidIntegralR = 0;
+float  pidDerivativeL = 0;
+float  pidDerivativeR = 0;
+float  pidDriveL;
+float  pidDriveR;
 
-pidLastError  = 0;
-pidIntegral   = 0;
-
-while(fabs(pidError) > 0.03){
-
-encoderValue = -DRIVE_LB.rotation(vex::rotationUnits (rev));
+pidLastErrorL  = 0;
+pidLastErrorR  = 0;
+pidIntegralL   = 0;
+pidIntegralR   = 0;
 
 
-pidError = encoderValue - distance;
+while(fabs(pidErrorL) > 0.03 || fabs(pidErrorR) > 0.03 ){
+
+encoderValueL = -DRIVE_LB.rotation(vex::rotationUnits (rev));
+encoderValueR = -DRIVE_RB.rotation(vex::rotationUnits (rev));
+
+
+pidErrorL = encoderValueL - distance;
+pidErrorR = encoderValueR - distance;
 
 
 if( pid_Ki != 0 )
                 {
                 // If we are inside controlable window then integrate the error
-                if( fabs(pidError) < PID_INTEGRAL_LIMIT )
-                    pidIntegral = pidIntegral + pidError;
-                else
-                    pidIntegral = 0;
+                if( fabs(pidErrorL) < PID_INTEGRAL_LIMIT || fabs(pidErrorR) < PID_INTEGRAL_LIMIT){
+                    pidIntegralL = pidIntegralL + pidErrorL;
+                    pidIntegralR = pidIntegralR + pidErrorR;
+                     } else{
+                    pidIntegralL = 0;
+                    pidIntegralR = 0;
+                     }
                 }
-            else
-                pidIntegral = 0;
-
+            else{
+                pidIntegralL = 0;
+                pidIntegralR = 0;
+            }
             // calculate the derivative
-            pidDerivative = pidError - pidLastError;
-            pidLastError  = pidError;
+            pidDerivativeL = pidErrorL - pidLastErrorL;
+            pidLastErrorL  = pidErrorL;
+            pidDerivativeR = pidErrorR - pidLastErrorR;
+            pidLastErrorR  = pidErrorR;
+
 
             // calculate drive
-            pidDrive = (pid_Kp * pidError) + (pid_Ki * pidIntegral) + (pid_Kd * pidDerivative);
+            pidDriveL = (pid_Kp * pidErrorL) + (pid_Ki * pidIntegralL) + (pid_Kd * pidDerivativeL);
+            pidDriveR = (pid_Kp * pidErrorR) + (pid_Ki * pidIntegralR) + (pid_Kd * pidDerivativeR);
 
             // limit drive
-            if( pidDrive > PID_DRIVE_MAX )
-                pidDrive = PID_DRIVE_MAX;
-            if( pidDrive < PID_DRIVE_MIN )
-                pidDrive = PID_DRIVE_MIN;
+            if( pidDriveL > PID_DRIVE_MAX )
+                pidDriveL = PID_DRIVE_MAX;
+            if( pidDriveL < PID_DRIVE_MIN )
+                pidDriveL = PID_DRIVE_MIN;
+
+            if( pidDriveR > PID_DRIVE_MAX )
+                pidDriveR = PID_DRIVE_MAX;
+            if( pidDriveR < PID_DRIVE_MIN )
+                pidDriveR = PID_DRIVE_MIN;
+            
+
 
             // send to motor
-            drive(pidDrive * speed1, pidDrive * speed2);
+            drive(pidDriveL * speed1, pidDriveR * speed2);
             }
-
 }
 
 
