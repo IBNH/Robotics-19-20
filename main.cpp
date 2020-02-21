@@ -230,6 +230,8 @@ if( pid_Ki != 0 )
 
 vex::thread calcL;
 
+void test(void *func);
+
 int* encoderL(int i){
   while(true){
 
@@ -241,7 +243,7 @@ int* encoderL(int i){
 void calcR()
 {
   while(true){
-    test(&calcR);
+    
   }
 }
 
@@ -509,7 +511,7 @@ if(controller1.ButtonL1.pressing()){
 int main() {
     //Set up callbacks for autonomous and driver control periods.
    //calcTask =  vex::task(encoderL());
-   vex::thread thread( threadR() );
+   vex::thread thread( test(calcR()) );
   
     Competition.autonomous( autonomous );
     Competition.drivercontrol( usercontrol );
